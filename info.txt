@@ -1,0 +1,35 @@
+StatBash: Choose a certain number of statistics to beat a randomly generated computer's stats. Is there a best way to play??
+Each team gets 5 random stats. You may use 1 token point for each of the following, although (g)eneral tokens cost 2.
+(f)ire - beats p, beaten by w
+(w)ater - beats f, beaten by p
+(p)lant - beats w, beaten by f
+(g)eneral - beats everything except g
+
+(Later feature)You may also heal any shields at a cost of 2 tokens per 1 shield. Core health points cannot be healed in a given round
+
+Each player has 2 shields of each of the 3 elements, and then 3 core health points after that:
+f ++
+w ++
+p ++
+health +++
+
+Let's just make it really simple and say I can only choose 5 tokens, either f, w, or p, and the computer randomly generates 5 of any of those too. Order matters! Let's say I choose pwffp. The computer randomly generates fpfpw. Let's look at the breakdown on this:
+p + f = -p 
+w + p = -w
+f + f = 0
+f + p = p-
+p + w = w-
+
+Results: Me:
+f ++
+w +-
+p +-
+health +++
+
+Cp:
+f ++
+w +-
+p +-
+health +++
+
+Let's get this part of the game operational before describing other features
