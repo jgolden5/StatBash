@@ -11,13 +11,26 @@ playerSetup() {
 	playerFShields=2
 	playerWShields=2
 	playerPShields=2
-	playerCanMoveOn="false"
-	while [ "$playerCanMoveOn" == "false" ]; do
+	playerCanMoveOn=1 #false
+	
+	while [ "$playerCanMoveOn" -eq 1 ]; do
 		echo "Enter your desired tokens: (only 5 allowed, either f, w, or p)"
 		read playerChoice
 		if [ ${#playerChoice} -eq 5 ]; then
-			sleepyEcho "You chose $playerChoice"
-			playerCanMoveOn="true"
+			containsUnrecognizedCharacters=1
+			for ((i = 0; i < ${#playerChoice}; i++)); do
+				character="${playerChoice:i:1}"
+				if [[ "$character" != "f" && "$character" != "w" && "$character" != "p" ]]; then 
+					containsUnrecognizedCharacters=0
+					break
+				fi
+			done
+			if [[ "$containsUnrecognizedCharacters" -eq 0 ]]; then
+				echo "String contains unrecognized characters, try again"
+			else 
+				sleepyEcho "You chose $playerChoice"
+				playerCanMoveOn=0
+			fi
 		elif [ ${#playerChoice} -gt 5 ]; then
 			echo "String is too long, try again"
 		elif [ ${#playerChoice} -lt 5 ]; then
