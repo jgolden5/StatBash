@@ -7,14 +7,14 @@ sleepyEcho() {
 playerChoice=""
 computerChoice=""
 
-playerFShields=1
-playerWShields=1
-playerPShields=1
+playerFShield=2
+playerWShield=2
+playerPShield=2
 playerCoreHealth=3
 
-computerFShields=2
-computerWShields=0
-computerPShields=0
+computerFShield=2
+computerWShield=2
+computerPShield=2
 playerCoreHealth=3
 
 playerSetup() {
@@ -49,6 +49,7 @@ playerSetup() {
 }
 
 computerSetup() {
+  computerChoice=""
 	counter=0
 	while [ $counter -lt 5 ]; do
 		random=$(( ( RANDOM % 3 )  + 1 ))
@@ -89,22 +90,37 @@ showPlayerHealth() {
 		fi
 		for ((i = 1; i < 3; i++)); do
 			if [[ "$j" -eq 1 ]]; then
-				if [[ $playerFShields -ge $i ]]; then
+				if [[ $playerFShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $playerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			elif [[ "$j" -eq 2 ]]; then
-				if [[ $playerWShields -ge $i ]]; then
+				if [[ $playerWShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $playerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			elif [[ "$j" -eq 3 ]]; then
-				if [[ $playerPShields -ge $i ]]; then
+				if [[ $playerPShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $playerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			fi
 		done
@@ -127,22 +143,37 @@ showComputerHealth() {
 		fi
 		for ((i = 1; i < 3; i++)); do
 			if [[ "$j" -eq 1 ]]; then
-				if [[ $computerFShields -ge $i ]]; then
+				if [[ $computerFShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $computerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			elif [[ "$j" -eq 2 ]]; then
-				if [[ $computerWShields -ge $i ]]; then
+				if [[ $computerWShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $computerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			elif [[ "$j" -eq 3 ]]; then
-				if [[ $computerPShields -ge $i ]]; then
+				if [[ $computerPShield -ge $i ]]; then
 					line+="+"
 				else
-					line+="-"
+				  if [[ $computerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+            line+="-"
+					else
+            line+="-"
+					  line+="☠️"
+					fi
 				fi
 			fi
 		done
@@ -150,16 +181,85 @@ showComputerHealth() {
 	done
 }
 
-#fight() {
-#	for ((i = 0; i < ${#playerChoice}; i++)); do
-#		playerChar="${playerChoice:i:1}"
-#		computerChar="${computerChoice:i:1}"
-#		sleepyEcho "$playerChar vs. $computerChar"
-#	done
-#}
+fight() {
+	playerSetup
+	computerSetup
+	for ((i = 0; i < ${#playerChoice}; i++)); do
+		playerChar="${playerChoice:i:1}"
+		computerChar="${computerChoice:i:1}"
+		sleepyEcho "$playerChar vs. $computerChar"
+		if [[ $playerChar == $computerChar ]]; then
+			sleepyEcho "Tie!"
+			continue
+		elif [[ $playerChar == "f" ]]; then
+			if [[ $computerChar == "w" ]]; then
+				playerFShield=$((playerFShield-1))
+				sleepyEcho "your fire was beaten by water"
+				if [[ $playerFShield -lt 0 ]]; then
+					sleepyEcho "Without fire shields, you have drowned in the water..."
+					playerDie
+					break
+				fi
+			elif [[ $computerChar == "p" ]]; then
+				computerPShield=$((computerPShield-1))
+				sleepyEcho "your fire beat your enemy's plant!"
+				if [[ $computerPShield -lt 0 ]]; then
+					sleepyEcho "Without plant shields, the computer has been burned alive!"
+					computerDie
+					break
+				fi
+			fi
+		elif [[ $playerChar == "w" ]]; then
+			if [[ $computerChar == "f" ]]; then
+				computerFShield=$((computerFShield-1))
+				sleepyEcho "your water beat your enemy's fire!"
+				if [[ $playerFShield -lt 0 ]]; then
+					sleepyEcho "Without fire shields, the computer has drowned!"
+					computerDie
+					break
+				fi
+			elif [[ $computerChar == "p" ]]; then
+				playerWShield=$((playerWShield-1))
+				sleepyEcho "your water was beaten by plant"
+				if [[ $playerWShield -lt 0 ]]; then
+					sleepyEcho "Without water shields, you have been constricted to death by plants..."
+					playerDie
+					break
+				fi
+			fi
+		elif [[ $playerChar == "p" ]]; then
+			if [[ $computerChar == "f" ]]; then
+				playerPShield=$((playerPShield-1))
+				sleepyEcho "your plant was beaten by fire"
+				if [[ $playerPShield -lt 0 ]]; then
+					sleepyEcho "Without plant shields, you have been burned alive..."
+					playerDie
+					break
+				fi
+			elif [[ $computerChar == "w" ]]; then
+				computerWShield=$((computerWShield-1))
+				sleepyEcho "your plant beat your enemy's water!"
+				if [[ $computerWShield -lt 0 ]]; then
+					sleepyEcho "Without water shields, your enemy has been constricted to death by plants!"
+					computerDie
+					break
+				fi
+			fi
+		else 
+			echo "Something went wrong, characters not recognized"
+		fi
+	done
 
-playerSetup
-computerSetup
-showPlayerHealth
-showComputerHealth
-#fight
+	showPlayerHealth
+	showComputerHealth
+}
+
+playerDie() {
+	sleepyEcho "You have died..."
+}
+
+computerDie() {
+	sleepyEcho "You have successfully defeated the enemy! Mission accomplished."
+}
+
+fight
