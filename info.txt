@@ -32,4 +32,5 @@ w +-
 p +-
 health +++
 
-Let's get this part of the game operational before describing other features
+Feature Ideas:
+-Recharge 1 random shield every time I beat the computer

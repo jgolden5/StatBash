@@ -38,6 +38,8 @@ reset() {
   computerPShield=2
 #  computerCoreHealth=3
 
+  fight
+
 }
 
 computerReset() {
@@ -217,6 +219,7 @@ showComputerHealth() {
 fight() {
   if [[ $computerIsDead -eq 0 ]]; then
     computerReset
+    computerIsDead=1
   fi
 	playerSetup
 	computerSetup
@@ -288,22 +291,25 @@ fight() {
 
 	showPlayerHealth
 	showComputerHealth
-	sleepyEcho "Score = $score"
 }
 
 playerDie() {
 	sleepyEcho "You have died..."
+	echo "Score = $score"
 	if [[ $score -gt $highScore ]]; then
 	  highScore=$score
 	  sleepyEcho "New High Score!"
 	fi
-  reset
+	sleepyEcho "High Score =  $highScore"
 }
 
 computerDie() {
   computerIsDead=0
 	sleepyEcho "You have successfully defeated the enemy! Mission accomplished."
 	score=$((score+1))
+	sleepyEcho "Score = $score"
 }
 
 fight
+
+alias f=fight
