@@ -7,10 +7,17 @@ sleepyEcho() {
 playerChoice=""
 computerChoice=""
 
+playerFShields=1
+playerWShields=1
+playerPShields=1
+playerCoreHealth=3
+
+computerFShields=2
+computerWShields=0
+computerPShields=0
+playerCoreHealth=3
+
 playerSetup() {
-	playerFShields=2
-	playerWShields=2
-	playerPShields=2
 	playerCanMoveOn=1 #false
 	
 	while [ "$playerCanMoveOn" -eq 1 ]; do
@@ -42,10 +49,6 @@ playerSetup() {
 }
 
 computerSetup() {
-	computerFShields=2
-	computerWShields=2
-	computerPShields=2
-
 	counter=0
 	while [ $counter -lt 5 ]; do
 		random=$(( ( RANDOM % 3 )  + 1 ))
@@ -71,5 +74,92 @@ computerSetup() {
 	sleepyEcho "The computer chose $computerChoice"
 }
 
+showPlayerHealth() {
+	echo -e "\nPlayer"
+	for ((j = 1; j < 4; j++)); do
+		line=""
+		if [[ "$j" -eq 1 ]]; then
+			line+="f "
+		elif [[ "$j" -eq 2 ]]; then
+			line+="w "
+		elif [[ "$j" -eq 3 ]]; then
+			line+="p "
+		else
+			echo "Something went wrong line 92"
+		fi
+		for ((i = 1; i < 3; i++)); do
+			if [[ "$j" -eq 1 ]]; then
+				if [[ $playerFShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			elif [[ "$j" -eq 2 ]]; then
+				if [[ $playerWShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			elif [[ "$j" -eq 3 ]]; then
+				if [[ $playerPShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			fi
+		done
+		echo $line
+	done
+}
+
+showComputerHealth() {
+	echo -e "\nComputer"
+	for ((j = 1; j < 4; j++)); do
+		line=""
+		if [[ "$j" -eq 1 ]]; then
+			line+="f "
+		elif [[ "$j" -eq 2 ]]; then
+			line+="w "
+		elif [[ "$j" -eq 3 ]]; then
+			line+="p "
+		else
+			echo "Something went wrong line 92"
+		fi
+		for ((i = 1; i < 3; i++)); do
+			if [[ "$j" -eq 1 ]]; then
+				if [[ $computerFShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			elif [[ "$j" -eq 2 ]]; then
+				if [[ $computerWShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			elif [[ "$j" -eq 3 ]]; then
+				if [[ $computerPShields -ge $i ]]; then
+					line+="+"
+				else
+					line+="-"
+				fi
+			fi
+		done
+		echo $line
+	done
+}
+
+#fight() {
+#	for ((i = 0; i < ${#playerChoice}; i++)); do
+#		playerChar="${playerChoice:i:1}"
+#		computerChar="${computerChoice:i:1}"
+#		sleepyEcho "$playerChar vs. $computerChar"
+#	done
+#}
+
 playerSetup
 computerSetup
+showPlayerHealth
+showComputerHealth
+#fight
