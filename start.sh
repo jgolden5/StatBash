@@ -4,18 +4,51 @@ sleepyEcho() {
 	sleep 1
 }
 
+computerIsDead=1
+score=0
+highScore=0
+
 playerChoice=""
 computerChoice=""
 
 playerFShield=2
 playerWShield=2
 playerPShield=2
-playerCoreHealth=3
+#playerCoreHealth=3
 
 computerFShield=2
 computerWShield=2
 computerPShield=2
-playerCoreHealth=3
+#playerCoreHealth=3
+
+reset() {
+  score=0
+  highScore=0
+
+  playerChoice=""
+  computerChoice=""
+
+  playerFShield=2
+  playerWShield=2
+  playerPShield=2
+#  playerCoreHealth=3
+
+  computerFShield=2
+  computerWShield=2
+  computerPShield=2
+#  computerCoreHealth=3
+
+}
+
+computerReset() {
+  computerChoice=""
+
+  computerFShield=2
+  computerWShield=2
+  computerPShield=2
+#  computerCoreHealth=3
+
+}
 
 playerSetup() {
 	playerCanMoveOn=1 #false
@@ -182,6 +215,9 @@ showComputerHealth() {
 }
 
 fight() {
+  if [[ $computerIsDead -eq 0 ]]; then
+    computerReset
+  fi
 	playerSetup
 	computerSetup
 	for ((i = 0; i < ${#playerChoice}; i++)); do
@@ -213,7 +249,7 @@ fight() {
 			if [[ $computerChar == "f" ]]; then
 				computerFShield=$((computerFShield-1))
 				sleepyEcho "your water beat your enemy's fire!"
-				if [[ $playerFShield -lt 0 ]]; then
+				if [[ $computerFShield -lt 0 ]]; then
 					sleepyEcho "Without fire shields, the computer has drowned!"
 					computerDie
 					break
@@ -252,14 +288,22 @@ fight() {
 
 	showPlayerHealth
 	showComputerHealth
+	sleepyEcho "Score = $score"
 }
 
 playerDie() {
 	sleepyEcho "You have died..."
+	if [[ $score -gt $highScore ]]; then
+	  highScore=$score
+	  sleepyEcho "New High Score!"
+	fi
+  reset
 }
 
 computerDie() {
+  computerIsDead=0
 	sleepyEcho "You have successfully defeated the enemy! Mission accomplished."
+	score=$((score+1))
 }
 
 fight
