@@ -23,7 +23,6 @@ computerPShield=2
 
 reset() {
   score=0
-  highScore=0
 
   playerChoice=""
   computerChoice=""
@@ -220,6 +219,8 @@ fight() {
   if [[ $computerIsDead -eq 0 ]]; then
     computerReset
     computerIsDead=1
+    playerHeal
+    showPlayerHealth
   fi
 	playerSetup
 	computerSetup
@@ -308,6 +309,46 @@ computerDie() {
 	sleepyEcho "You have successfully defeated the enemy! Mission accomplished."
 	score=$((score+1))
 	sleepyEcho "Score = $score"
+}
+
+playerHeal() {
+  count=0
+  while [[ $count -lt 2 ]]; do
+    random=$(( ( RANDOM % 3 )  + 1 ))
+    case $random in
+      1)
+        if [[ $playerFShield -lt 2 ]]; then
+          ((playerFShield++))
+          echo "1 fire shield healed"
+        else
+          echo "fire shields are full, so nothing was healed"
+        fi
+        ;;
+
+      2)
+        if [[ $playerWShield -lt 2 ]]; then
+          ((playerWShield++))
+          echo "1 water shield healed"
+        else
+          echo "water shields are full, so nothing was healed"
+        fi
+        ;;
+
+      3)
+        if [[ $playerPShield -lt 2 ]]; then
+          ((playerPShield++))
+          echo "1 plant shield healed"
+        else
+          echo "plant shields are full, so nothing was healed"
+        fi
+        ;;
+
+      *)
+        echo "case statement went wrong!"
+        ;;
+    esac
+    ((count++))
+  done
 }
 
 fight
