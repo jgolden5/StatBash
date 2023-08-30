@@ -4,6 +4,9 @@ sleepyEcho() {
 	sleep 1
 }
 
+playerBaseCoreHealth=3
+computerBaseCoreHealth=2
+
 computerIsDead=1
 score=0
 highScore=0
@@ -14,12 +17,12 @@ computerChoice=""
 playerFShield=2
 playerWShield=2
 playerPShield=2
-#playerCoreHealth=3
+playerCurrentHealth=$playerBaseCoreHealth
 
 computerFShield=2
 computerWShield=2
 computerPShield=2
-#playerCoreHealth=3
+computerCurrentHealth=$computerBaseCoreHealth
 
 reset() {
   score=0
@@ -30,12 +33,12 @@ reset() {
   playerFShield=2
   playerWShield=2
   playerPShield=2
-#  playerCoreHealth=3
+  playerCurrentHealth=$playerBaseCoreHealth
 
   computerFShield=2
   computerWShield=2
   computerPShield=2
-#  computerCoreHealth=3
+  computerCurrentHealth=$computerBaseCoreHealth
 
   fight
 
@@ -47,13 +50,13 @@ computerReset() {
   computerFShield=2
   computerWShield=2
   computerPShield=2
-#  computerCoreHealth=3
+  computerCurrentHealth=$computerBaseCoreHealth
 
 }
 
 playerSetup() {
 	playerCanMoveOn=1 #false
-	
+
 	while [ "$playerCanMoveOn" -eq 1 ]; do
 		echo "Enter your desired tokens: (only 5 allowed, either f, w, or p)"
 		read playerChoice
@@ -61,14 +64,14 @@ playerSetup() {
 			containsUnrecognizedCharacters=1
 			for ((i = 0; i < ${#playerChoice}; i++)); do
 				character="${playerChoice:i:1}"
-				if [[ "$character" != "f" && "$character" != "w" && "$character" != "p" ]]; then 
+				if [[ "$character" != "f" && "$character" != "w" && "$character" != "p" ]]; then
 					containsUnrecognizedCharacters=0
 					break
 				fi
 			done
 			if [[ "$containsUnrecognizedCharacters" -eq 0 ]]; then
 				echo "String contains unrecognized characters, try again"
-			else 
+			else
 				sleepyEcho "You chose $playerChoice"
 				playerCanMoveOn=0
 			fi
@@ -76,7 +79,7 @@ playerSetup() {
 			echo "String is too long, try again"
 		elif [ ${#playerChoice} -lt 5 ]; then
 			echo "String is too short, try again"
-		else 
+		else
 			echo "error: String length not recognized"
 		fi
 	done
@@ -87,15 +90,15 @@ computerSetup() {
 	counter=0
 	while [ $counter -lt 5 ]; do
 		random=$(( ( RANDOM % 3 )  + 1 ))
-		case $random in 
+		case $random in
 			1)
 				computerChoice+=f
 				;;
 
-			2) 
+			2)
 				computerChoice+=w
 				;;
-		
+
 			3)
 				computerChoice+=p
 				;;
@@ -111,7 +114,7 @@ computerSetup() {
 
 showPlayerHealth() {
 	echo -e "\nPlayer"
-	for ((j = 1; j < 4; j++)); do
+	for ((j = 1; j < 5; j++)); do
 		line=""
 		if [[ "$j" -eq 1 ]]; then
 			line+="f "
@@ -119,52 +122,70 @@ showPlayerHealth() {
 			line+="w "
 		elif [[ "$j" -eq 3 ]]; then
 			line+="p "
+		elif [[ "$j" -eq 4 ]]; then
+			line+="health "
 		else
 			echo "Something went wrong line 92"
 		fi
-		for ((i = 1; i < 3; i++)); do
-			if [[ "$j" -eq 1 ]]; then
-				if [[ $playerFShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $playerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
+		if [[ $j -lt 4 ]]; then
+			for ((i = 1; i < 3; i++)); do
+				if [[ "$j" -eq 1 ]]; then
+					if [[ $playerFShield -ge $i ]]; then
+						line+="+"
 					else
-            line+="-"
-					  line+="☠️"
+						if [[ $playerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $playerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
+					fi
+				elif [[ "$j" -eq 2 ]]; then
+					if [[ $playerWShield -ge $i ]]; then
+						line+="+"
+					else
+						if [[ $playerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $playerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
+					fi
+				elif [[ "$j" -eq 3 ]]; then
+					if [[ $playerPShield -ge $i ]]; then
+						line+="+"
+					else
+						if [[ $playerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $playerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
 					fi
 				fi
-			elif [[ "$j" -eq 2 ]]; then
-				if [[ $playerWShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $playerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
-					else
-            line+="-"
-					  line+="☠️"
-					fi
-				fi
-			elif [[ "$j" -eq 3 ]]; then
-				if [[ $playerPShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $playerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
-					else
-            line+="-"
-					  line+="☠️"
-					fi
-				fi
-			fi
-		done
+			done
+		else
+			for ((i = 0; i < $playerBaseCoreHealth; i++)); do
+			  if [[ $playerCurrentHealth -gt $i ]]; then
+          line+="|"
+        else
+          line+="*"
+        fi
+			done
+		fi
 		echo $line
 	done
 }
 
 showComputerHealth() {
 	echo -e "\nComputer"
-	for ((j = 1; j < 4; j++)); do
+	for ((j = 1; j < 5; j++)); do
 		line=""
 		if [[ "$j" -eq 1 ]]; then
 			line+="f "
@@ -172,45 +193,63 @@ showComputerHealth() {
 			line+="w "
 		elif [[ "$j" -eq 3 ]]; then
 			line+="p "
+		elif [[ "$j" -eq 4 ]]; then
+			line+="health "
 		else
 			echo "Something went wrong line 92"
 		fi
-		for ((i = 1; i < 3; i++)); do
-			if [[ "$j" -eq 1 ]]; then
-				if [[ $computerFShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $computerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
+		if [[ $j -lt 4 ]]; then
+			for ((i = 1; i < 3; i++)); do
+				if [[ "$j" -eq 1 ]]; then
+					if [[ $computerFShield -ge $i ]]; then
+						line+="+"
 					else
-            line+="-"
-					  line+="☠️"
+						if [[ $computerFShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $computerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
+					fi
+				elif [[ "$j" -eq 2 ]]; then
+					if [[ $computerWShield -ge $i ]]; then
+						line+="+"
+					else
+						if [[ $computerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $computerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
+					fi
+				elif [[ "$j" -eq 3 ]]; then
+					if [[ $computerPShield -ge $i ]]; then
+						line+="+"
+					else
+						if [[ $computerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
+							line+="-"
+						else
+							line+="-"
+							if [[ $computerCurrentHealth -le 0 ]]; then
+                line+="☠️"
+							fi
+						fi
 					fi
 				fi
-			elif [[ "$j" -eq 2 ]]; then
-				if [[ $computerWShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $computerWShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
-					else
-            line+="-"
-					  line+="☠️"
-					fi
-				fi
-			elif [[ "$j" -eq 3 ]]; then
-				if [[ $computerPShield -ge $i ]]; then
-					line+="+"
-				else
-				  if [[ $computerPShield -ge 0 ]] || [[ $i -lt 2 ]]; then
-            line+="-"
-					else
-            line+="-"
-					  line+="☠️"
-					fi
-				fi
-			fi
-		done
+			done
+		else
+			for ((i = 0; i < $computerBaseCoreHealth; i++)); do
+			  if [[ $computerCurrentHealth -gt $i ]]; then
+          line+="|"
+        else
+          line+="*"
+        fi
+			done
+		fi
 		echo $line
 	done
 }
@@ -236,17 +275,21 @@ fight() {
 				playerFShield=$((playerFShield-1))
 				sleepyEcho "your fire was beaten by water"
 				if [[ $playerFShield -lt 0 ]]; then
-					sleepyEcho "Without fire shields, you have drowned in the water..."
-					playerDie
-					break
+					sleepyEcho "Without fire shields, your core health was damaged"
+					playerCoreHealthDamage
+					if [[ $playerCurrentHealth -le 0 ]]; then
+            break
+					fi
 				fi
 			elif [[ $computerChar == "p" ]]; then
 				computerPShield=$((computerPShield-1))
 				sleepyEcho "your fire beat your enemy's plant!"
 				if [[ $computerPShield -lt 0 ]]; then
-					sleepyEcho "Without plant shields, the computer has been burned alive!"
-					computerDie
-					break
+					sleepyEcho "Without plant shields, your enemy's core health has been damaged!"
+					computerCoreHealthDamage
+					if [[ $computerCurrentHealth -le 0 ]]; then
+            break
+					fi
 				fi
 			fi
 		elif [[ $playerChar == "w" ]]; then
@@ -254,17 +297,21 @@ fight() {
 				computerFShield=$((computerFShield-1))
 				sleepyEcho "your water beat your enemy's fire!"
 				if [[ $computerFShield -lt 0 ]]; then
-					sleepyEcho "Without fire shields, the computer has drowned!"
-					computerDie
+					sleepyEcho "Without water shields, your enemy's core health has been damaged!"
+					if [[ $computerCurrentHealth -le 0 ]]; then
+            break
+					fi
 					break
 				fi
 			elif [[ $computerChar == "p" ]]; then
 				playerWShield=$((playerWShield-1))
 				sleepyEcho "your water was beaten by plant"
 				if [[ $playerWShield -lt 0 ]]; then
-					sleepyEcho "Without water shields, you have been constricted to death by plants..."
-					playerDie
-					break
+					sleepyEcho "Without water shields, your core health was damaged"
+					playerCoreHealthDamage
+					if [[ $playerCurrentHealth -le 0 ]]; then
+            break
+					fi
 				fi
 			fi
 		elif [[ $playerChar == "p" ]]; then
@@ -272,20 +319,19 @@ fight() {
 				playerPShield=$((playerPShield-1))
 				sleepyEcho "your plant was beaten by fire"
 				if [[ $playerPShield -lt 0 ]]; then
-					sleepyEcho "Without plant shields, you have been burned alive..."
-					playerDie
-					break
+					sleepyEcho "Without plant shields, your core health was damaged"
+					playerCoreHealthDamage
 				fi
 			elif [[ $computerChar == "w" ]]; then
 				computerWShield=$((computerWShield-1))
 				sleepyEcho "your plant beat your enemy's water!"
 				if [[ $computerWShield -lt 0 ]]; then
-					sleepyEcho "Without water shields, your enemy has been constricted to death by plants!"
-					computerDie
+					sleepyEcho "Without plant shields, your enemy's core health has been damaged!"
+					computerCoreHealthDamage
 					break
 				fi
 			fi
-		else 
+		else
 			echo "Something went wrong, characters not recognized"
 		fi
 	done
@@ -309,6 +355,22 @@ computerDie() {
 	sleepyEcho "You have successfully defeated the enemy! Mission accomplished."
 	score=$((score+1))
 	sleepyEcho "Score = $score"
+}
+
+playerCoreHealthDamage() {
+	playerCurrentHealth=$((playerCurrentHealth-1))
+	if [[ $playerCurrentHealth -le 0 ]]; then
+		sleepyEcho "Your core has been destroyed"
+		playerDie
+	fi
+}
+
+computerCoreHealthDamage() {
+	computerCurrentHealth=$((computerCurrentHealth-1))
+	if [[ $computerCurrentHealth -le 0 ]]; then
+		sleepyEcho "Your enemy's core has been destroyed"
+		computerDie
+	fi
 }
 
 playerHeal() {

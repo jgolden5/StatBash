@@ -1,0 +1,5 @@
+present:
+add core health to player & computer
+
+future:
+commit this file to StatBash
