@@ -4,7 +4,7 @@ sleepyEcho() {
 	sleep 1
 }
 
-playerBaseCoreHealth=3
+playerBaseCoreHealth=10
 computerBaseCoreHealth=2
 
 computerIsDead=1
