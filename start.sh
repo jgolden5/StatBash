@@ -139,6 +139,7 @@ showPlayerHealth() {
 							line+="-"
 							if [[ $playerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -152,6 +153,7 @@ showPlayerHealth() {
 							line+="-"
 							if [[ $playerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -165,6 +167,7 @@ showPlayerHealth() {
 							line+="-"
 							if [[ $playerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -175,7 +178,7 @@ showPlayerHealth() {
 			  if [[ $playerCurrentHealth -gt $i ]]; then
           line+="|"
         else
-          line+="*"
+          line+="X"
         fi
 			done
 		fi
@@ -210,6 +213,7 @@ showComputerHealth() {
 							line+="-"
 							if [[ $computerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -223,6 +227,7 @@ showComputerHealth() {
 							line+="-"
 							if [[ $computerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -236,6 +241,7 @@ showComputerHealth() {
 							line+="-"
 							if [[ $computerCurrentHealth -le 0 ]]; then
                 line+="☠️"
+                break
 							fi
 						fi
 					fi
@@ -246,7 +252,7 @@ showComputerHealth() {
 			  if [[ $computerCurrentHealth -gt $i ]]; then
           line+="|"
         else
-          line+="*"
+          line+="X"
         fi
 			done
 		fi
@@ -298,10 +304,10 @@ fight() {
 				sleepyEcho "your water beat your enemy's fire!"
 				if [[ $computerFShield -lt 0 ]]; then
 					sleepyEcho "Without water shields, your enemy's core health has been damaged!"
+					computerCoreHealthDamage
 					if [[ $computerCurrentHealth -le 0 ]]; then
             break
 					fi
-					break
 				fi
 			elif [[ $computerChar == "p" ]]; then
 				playerWShield=$((playerWShield-1))
@@ -328,7 +334,9 @@ fight() {
 				if [[ $computerWShield -lt 0 ]]; then
 					sleepyEcho "Without plant shields, your enemy's core health has been damaged!"
 					computerCoreHealthDamage
-					break
+					if [[ $computerCurrentHealth -le 0 ]]; then
+            break
+					fi
 				fi
 			fi
 		else
@@ -362,6 +370,7 @@ playerCoreHealthDamage() {
 	if [[ $playerCurrentHealth -le 0 ]]; then
 		sleepyEcho "Your core has been destroyed"
 		playerDie
+		break
 	fi
 }
 
@@ -370,6 +379,7 @@ computerCoreHealthDamage() {
 	if [[ $computerCurrentHealth -le 0 ]]; then
 		sleepyEcho "Your enemy's core has been destroyed"
 		computerDie
+		break
 	fi
 }
 
