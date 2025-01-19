@@ -1,5 +1,5 @@
 StatBash: Choose a certain number of statistics to beat a randomly generated computer's stats. Is there a best way to play??
-Each team gets 5 random stats. You may use 1 token point for each of the following, although (g)eneral tokens cost 2.
+Each team gets 5 random  fighting tokens. You may use 1 token point for each of the following, although (g)eneral tokens cost 2.
 (f)ire - beats p, beaten by w
 (w)ater - beats f, beaten by p
 (p)lant - beats w, beaten by f
